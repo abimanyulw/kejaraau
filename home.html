@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+  <title>Beranda — Aplikasi Latihan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Yeseva+One&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg: #141818;
+      --frame: #f9f9f9;
+      --text: #f9f9f9;
+      --muted: rgba(249,249,249,0.7);
+      --accent: rgba(249,249,249,0.06);
+      --glass: rgba(255,255,255,0.04);
+      --success: #9be7a2;
+      --danger: #ff8b94;
+    }
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family: 'Josefin Sans', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding:18px 12px;
+    }
+
+    .phone {
+      width:420px; /* looks good on wide mobile screens in preview */
+      max-width:100%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+
+    header{
+      padding:18px 18px 14px 18px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.02), transparent);
+    }
+    .logo {
+      width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--glass);border:1px solid rgba(255,255,255,0.03);
+      font-family: 'Yeseva One', serif;color:var(--frame);font-size:18px
+    }
+    h1{font-family:'Yeseva One', serif;margin:0;font-size:18px;color:var(--frame);}
+    p.subtitle{margin:0;font-size:12px;color:var(--muted)}
+
+    main{padding:18px;background:transparent;}
+
+    .card{
+      background: rgba(255,255,255,0.02);
+      border-radius:14px;
+      padding:16px;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+
+    .section-title{font-weight:700;font-size:14px;color:var(--frame);margin-bottom:8px}
+    .section-sub{font-size:13px;color:var(--muted);margin-bottom:10px}
+
+    .menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .menu-item{padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.03);display:flex;flex-direction:column;gap:8px;min-height:86px;justify-content:center}
+    .menu-item h3{margin:0;font-size:15px;color:var(--frame);font-weight:700}
+    .menu-item p{margin:0;font-size:12px;color:var(--muted)}
+    .menu-item a{display:inline-block;margin-top:8px;padding:8px 10px;border-radius:10px;background:var(--glass);border:1px solid rgba(255,255,255,0.04);text-decoration:none;color:var(--frame);font-weight:600}
+
+    .list{display:flex;flex-direction:column;gap:8px}
+    .list .item{padding:10px;border-radius:10px;background:rgba(255,255,255,0.01);border:1px solid rgba(255,255,255,0.03);display:flex;justify-content:space-between;align-items:center}
+    .list .item .title{font-weight:600;color:var(--frame)}
+    .list .item .meta{font-size:12px;color:var(--muted)}
+
+    .footer{padding:12px 18px;font-size:12px;color:var(--muted);text-align:center}
+
+    @media (max-width:420px){
+      .phone{border-radius:12px}
+      .menu-item{min-height:74px}
+    }
+  </style>
+</head>
+<body>
+  <div class="phone" role="application">
+    <header>
+      <div class="logo">KR</div>
+      <div>
+        <h1>Gas Kejar AAU</h1>
+        <p class="subtitle">Semangat Bang!</p>
+      </div>
+    </header>
+
+    <main>
+      <div class="card" style="margin-bottom:12px">
+        <div class="section-title">Latihan Dasar</div>
+        <div class="section-sub">Pilih modul latihan untuk mulai berlatih.</div>
+        <div class="menu-grid">
+          <div class="menu-item">
+            <div>
+              <h3>1. Tes Koran</h3><br>
+              <p> Tes ini menguji seberapa cepat dan akurat peserta dapat melakukan tugas-tugas kognitif yang melibatkan deretan angka atau huruf.</p>
+            </div>
+            <a href="koran.html" aria-label="Buka Tes Koran">Buka</a>
+          </div>
+
+          <div class="menu-item">
+            <div>
+              <h3>2. Tes Deret Angka</h3><br>
+              <p>Tes ini bertujuan untuk mengukur kemampuan analisis, ketelitian, dan kecermatan dalam memecahkan masalah numerik. </p>
+            </div>
+            <a href="deret.html" aria-label="Buka Tes Deret Angka">Buka</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Materi-Materi</div>
+        <div class="section-sub">Bahan belajar dan penjelasan singkat.</div>
+        <div class="list">
+
+          <div class="item">
+            <div>
+              <div class="title">Psikotes</div>
+              <div class="meta">Tes yang dilakukan untuk mengukur aspek individu secara psikis. </div>
+            </div>
+            <a href="https://drive.google.com/drive/folders/19qA5zX8DCm33GRyRQvQzVIFGTOMGl8xD" class="btn-link" aria-label="Buka Materi Psikotes">Buka</a>
+          </div>
+
+          <div class="item">
+            <div>
+              <div class="title">Akademik</div>
+              <div class="meta">Bahasa Inggris, Bahasa Indonesia, Pengetahuan Alam, dan Pengetahuan Umum</div>
+            </div>
+            <a href="https://drive.google.com/drive/folders/19YIhYl3TZIp4KVON1gO_mdRPQDEqnxmu" class="btn-link" aria-label="Buka Materi Akademik">Buka</a>
+          </div>
+
+<div class="item">
+            <div>
+              <div class="title">Ideologi dan Kebangsaan</div>
+              <div class="meta">Pancasila dan UUD 1945</div>
+            </div>
+            <a href="https://drive.google.com/drive/folders/1GZm51XRZFI5LtcWzRd9FWaVElRu4SR1D" class="btn-link" aria-label="Buka Materi Akademik">Buka</a>
+          </div>
+
+
+        </div>
+      </div>
+    </main>
+
+    <div class="footer">Abimanyu 2025</div>
+  </div>
+
+  <script>
+    // small enhancement: smooth in-app anchor navigation
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click', (e)=>{ e.preventDefault(); const id = a.getAttribute('href').slice(1);
+        // simple modal-like info for anchors (avoid external pages)
+        const modal = document.createElement('div'); modal.style.position='fixed'; modal.style.inset='0'; modal.style.background='linear-gradient(180deg, rgba(20,24,24,0.9), rgba(20,24,24,0.95))'; modal.style.display='flex'; modal.style.alignItems='center'; modal.style.justifyContent='center'; modal.style.zIndex=9999;
+        const panel = document.createElement('div'); panel.style.background='rgba(255,255,255,0.02)'; panel.style.border='1px solid rgba(255,255,255,0.03)'; panel.style.padding='18px'; panel.style.borderRadius='12px'; panel.style.maxWidth='420px'; panel.style.width='88%';
+        const h = document.createElement('h3'); h.textContent = id === 'psikotest' ? 'Materi Psikotes' : 'Materi Akademik'; h.style.fontFamily='Yeseva One, serif'; h.style.margin='0 0 8px 0';
+        const p = document.createElement('div'); p.style.color='var(--muted)'; p.style.fontSize='13px'; p.style.lineHeight='1.4'; p.textContent = id === 'psikotest' ? 'Kumpulan ringkasan jenis psikotes, tips pengerjaan, dan latihan singkat.' : 'Materi ringkas untuk latihan akademik: matematika dasar, logika, dan bahasa.';
+        const btn = document.createElement('button'); btn.textContent='Tutup'; btn.style.marginTop='12px'; btn.style.padding='10px 12px'; btn.style.borderRadius='10px'; btn.style.background='var(--glass)'; btn.style.border='1px solid rgba(255,255,255,0.04)'; btn.style.color='var(--frame)'; btn.addEventListener('click', ()=>document.body.removeChild(modal));
+        panel.appendChild(h); panel.appendChild(p); panel.appendChild(btn); modal.appendChild(panel); document.body.appendChild(modal);
+      })
+    })
+  </script>
+</body>
+</html>

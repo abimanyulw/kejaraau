@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+  <title>Latihan Tes Kraepelin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Yeseva+One&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg: #141818;
+      --frame: #f9f9f9;
+      --text: #f9f9f9;
+      --muted: rgba(249,249,249,0.7);
+      --accent: rgba(249,249,249,0.06);
+      --glass: rgba(255,255,255,0.04);
+      --success: #9be7a2;
+      --danger: #ff8b94;
+    }
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family: 'Josefin Sans', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding:18px 12px;
+    }
+
+    .phone {
+      width:420px; /* looks good on wide mobile screens in preview */
+      max-width:100%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+
+    header{
+      padding:18px 18px 14px 18px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.02), transparent);
+    }
+    .logo {
+      width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--glass);border:1px solid rgba(255,255,255,0.03);
+      font-family: 'Yeseva One', serif;color:var(--frame);font-size:18px
+    }
+    h1{font-family:'Yeseva One', serif;margin:0;font-size:18px;color:var(--frame);}
+    p.subtitle{margin:0;font-size:12px;color:var(--muted)}
+
+    main{padding:18px;background:transparent;}
+
+    .card{
+      background: rgba(255,255,255,0.02);
+      border-radius:14px;
+      padding:16px;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+
+    /* Question box adjustments */
+    .question-box{
+      min-height:140px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+    }
+    .problem{font-size:36px;letter-spacing:2px;color:var(--frame);font-weight:700}
+    .hint{font-size:12px;color:var(--muted)}
+
+    /* Answer row: center, responsive, input full-width inside constrained container */
+    .answer-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:nowrap;
+      justify-content:center;
+      margin-top:6px;
+      width:100%;
+      max-width:320px; /* constrain to keep layout tidy */
+      margin-left:auto;
+      margin-right:auto;
+    }
+    .num-input{
+      appearance:none;
+      border:1px solid rgba(255,255,255,0.06);
+      background:transparent;
+      border-radius:10px;
+      padding:12px 18px;
+      font-size:20px;
+      color:var(--text);
+      width:100%;          /* fill the constrained container */
+      min-width:0;         /* allow shrinking on small screens */
+      box-sizing:border-box;
+      text-align:center;
+      -moz-appearance:textfield;
+    }
+    /* remove number arrows in some browsers */
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button {
+      -webkit-appearance: none; margin: 0;
+    }
+
+    .controls{display:flex;gap:12px;justify-content:space-between;align-items:stretch;margin-top:12px;flex-wrap:nowrap}
+    /* make control columns flexible (avoid fixed widths that break) */
+    .controls > div{display:flex;flex-direction:column;gap:8px;flex:1;min-width:0}
+    .btn{background:var(--glass);border:1px solid rgba(255,255,255,0.04);padding:12px 14px;border-radius:10px;font-weight:600;color:var(--frame);font-size:14px;width:100%;flex:unset;text-align:center}
+    .btn.primary{background:linear-gradient(90deg, rgba(249,249,249,0.06), rgba(249,249,249,0.03));}
+    .btn.ghost{background:transparent;border-color:rgba(255,255,255,0.02)}
+
+    .progress{height:8px;background:rgba(255,255,255,0.03);border-radius:8px;overflow:hidden}
+    .progress > i{display:block;height:100%;background:linear-gradient(90deg, rgba(249,249,249,0.2), rgba(249,249,249,0.06));width:0%}
+
+    .footer{padding:12px 18px;font-size:12px;color:var(--muted);text-align:center}
+
+    .overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(180deg, rgba(20,24,24,0.9), rgba(20,24,24,0.95));z-index:60}
+    .overlay .panel{max-width:520px;width:100%;background:rgba(255,255,255,0.02);border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.04)}
+    .overlay h2{font-family:'Yeseva One',serif;margin:0 0 8px 0}
+    .small{font-size:13px;color:var(--muted);line-height:1.45}
+
+    .result{display:grid;gap:12px}
+    .result .row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+    .result .row > div{min-width:0}
+
+    /* Result summary: remove internal scroll and fit inside frame */
+    #resultSummary{
+      max-height: none;        /* no internal max height */
+      overflow: visible;       /* let the panel grow but constrained by phone width */
+      padding:8px;
+      box-sizing:border-box;
+      width:100%;
+    }
+
+    /* Tabel rincian: make table fit container, wrap text instead of causing horizontal overflow */
+    .table-wrapper{width:100%;overflow:visible;border-radius:8px}
+    .detail-table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:6px;
+      min-width:0;            /* allow table to shrink to container */
+      table-layout:auto;      /* allow columns to size naturally */
+    }
+    .detail-table th, .detail-table td{
+      padding:8px 6px;
+      text-align:left;
+      font-size:13px;
+      border-bottom:1px solid rgba(255,255,255,0.03);
+      color:var(--muted);
+      white-space:normal;     /* allow wrapping */
+      word-break:break-word;  /* break long words/values */
+    }
+    .detail-table th{color:var(--frame);font-weight:600;font-size:13px}
+
+    /* make notes column readable (wrap) */
+    .detail-table td:nth-child(6){max-width:160px}
+
+    @media (max-width:420px){
+      .phone{border-radius:12px}
+      .problem{font-size:30px}
+      .num-input{font-size:18px}
+      .btn{min-width:90px;font-size:13px}
+      .answer-row{max-width:260px}
+      .detail-table{min-width:0}
+      #resultSummary{max-height:none}
+    }
+  </style>
+</head>
+<body>
+  <div class="phone" role="application">
+    <header>
+      <div class="logo">KR</div>
+      <div>
+        <h1>Latihan Tes Kraepelin</h1>
+        <p class="subtitle">Psikotest</p>
+      </div>
+    </header>
+
+    <main>
+      <div class="card" id="app">
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div class="progress" aria-hidden><i id="prog"></i></div>
+<br>
+          <div class="question-box" id="questionBox">
+            <div class="problem" id="problemText">—</div>
+            <div class="hint" id="hintText">Masukkan hasil penjumlahan dengan cepat. Jawab otomatis lanjutkan saat terisi.</div>
+            <div class="answer-row">
+              <input id="answerInput" class="num-input" inputmode="numeric" pattern="[0-9]*" placeholder="Tulis jawaban" autocomplete="off" />
+            </div>
+
+            <div class="controls" style="width:100%">
+              <div>
+                <button class="btn ghost" id="pauseBtn">Jeda</button>
+                <button class="btn" id="skipBtn">Lewatkan</button>
+              </div>
+              <div>
+                <button class="btn ghost" id="settingsBtn">Pengaturan</button>
+                <button class="btn primary" id="submitBtn">Kirim</button>
+              </div>
+            </div>
+<br>
+            <div style="width:100%;display:flex;justify-content:space-between;margin-top:6px">
+              <div class="hint" id="qCount">Soal 0</div>
+              <div class="hint" id="timer">Sisa: 03:00</div>
+            </div>
+
+          </div>
+
+          <div id="endPanel" style="display:none" class="question-box">
+            <div class="sequence">Hasil Tes Kraepelin</div>
+            <div class="hint">Berikut ringkasan performa. Unduh JSON untuk analisis lebih lanjut.</div>
+            <div class="card result" id="resultSummary"></div>
+            <div style="display:flex;gap:8px;justify-content:center;margin-top:8px">
+              <button class="btn" id="retryBtn">Ulangi</button>
+              <button class="btn primary" id="downloadBtn">Unduh Hasil (JSON)</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+    <div class="footer">Abimanyu 2025</div>
+  </div>
+
+  <!-- Overlay instructions + settings -->
+  <div class="overlay" id="overlay">
+    <div class="panel">
+      <h2>Instruksi & Pengaturan</h2>
+      <p class="small">Tes Kraepelin ini menampilkan soal penjumlahan cepat satu per satu. Kamu akan melihat dua angka (mis. <strong>34 + 7</strong>), ketik hasilnya dan tekan Enter atau biarkan sistem mengirim otomatis saat jumlah digit jawaban terpenuhi. Tes berlangsung untuk durasi yang dipilih. Tujuan: menguji kecepatan dan ketepatan dalam operasi aritmetika sederhana.
+      </p>
+
+      <div style="display:flex;gap:8px;flex-direction:column;margin-top:12px">
+        <label class="small">Durasi:</label>
+        <div style="display:flex;gap:8px;">
+          <label class="btn ghost" style="padding:8px 10px"><input type="radio" name="duration" value="60"> 1 menit</label>
+          <label class="btn ghost" style="padding:8px 10px"><input type="radio" name="duration" value="180" checked> 3 menit</label>
+          <label class="btn ghost" style="padding:8px 10px"><input type="radio" name="duration" value="300"> 5 menit</label>
+        </div>
+
+        <label class="small">Tingkat kesulitan:</label>
+        <div style="display:flex;gap:8px;">
+          <label class="btn ghost" style="padding:8px 10px"><input type="radio" name="difficulty" value="0" checked> Satu/dua angka + satu angka (mis. 7 + 5)</label>
+          <label class="btn ghost" style="padding:8px 10px"><input type="radio" name="difficulty" value="1"> Dua digit + dua digit (mis. 34 + 12)</label>
+        </div>
+
+        <label class="small">Mode:</label>
+        <div style="display:flex;gap:8px;">
+          <label class="btn ghost" style="padding:8px 10px"><input type="radio" name="mode" value="continuous" checked> Kontinu</label>
+          <label class="btn ghost" style="padding:8px 10px"><input type="radio" name="mode" value="rounds"> Putaran singkat (30s tiap putaran)</label>
+        </div>
+
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+          <button class="btn primary" id="startBtn">Mulai Tes</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // --- Utilities ---
+    function randInt(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+    function pad(n){return String(n).padStart(2,'0')}
+
+    // --- App state ---
+    let startTime=null, remaining=180, timerInterval=null;
+    let running=false;
+    let problems=[]; // each {a,b,answer,tsStart,tsEnd,skip}
+    let curIndex=0;
+    let settings={duration:180,difficulty:0,mode:'continuous'};
+
+    // --- DOM ---
+    const overlay = document.getElementById('overlay');
+    const startBtn = document.getElementById('startBtn');
+    const settingsBtn = document.getElementById('settingsBtn');
+    const problemText = document.getElementById('problemText');
+    const hintText = document.getElementById('hintText');
+    const answerInput = document.getElementById('answerInput');
+    const submitBtn = document.getElementById('submitBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const skipBtn = document.getElementById('skipBtn');
+    const qCount = document.getElementById('qCount');
+    const timerEl = document.getElementById('timer');
+    const progEl = document.getElementById('prog');
+    const endPanel = document.getElementById('endPanel');
+    const questionBox = document.getElementById('questionBox');
+    const resultSummary = document.getElementById('resultSummary');
+    const retryBtn = document.getElementById('retryBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    // overlay radio bindings
+    document.querySelectorAll('input[name="duration"]').forEach(r=>r.addEventListener('change',e=>settings.duration=Number(e.target.value)));
+    document.querySelectorAll('input[name="difficulty"]').forEach(r=>r.addEventListener('change',e=>settings.difficulty=Number(e.target.value)));
+    document.querySelectorAll('input[name="mode"]').forEach(r=>r.addEventListener('change',e=>settings.mode=e.target.value));
+
+    // --- Problem generator ---
+    function genProblem(){
+      if(settings.difficulty===0){
+        const a = randInt(1,9); const b = randInt(1,9);
+        return {a,b,answer: a+b};
+      } else {
+        const a = randInt(10,99); const b = randInt(5,89);
+        return {a,b,answer: a+b};
+      }
+    }
+
+    function renderProblem(obj, idx){
+      problemText.textContent = `${obj.a}  +  ${obj.b}`;
+      qCount.textContent = `Soal ${idx+1}`;
+      answerInput.value = '';
+      answerInput.focus();
+    }
+
+    // --- Timer ---
+    function startTimer(){
+      startTime = Date.now();
+      remaining = settings.duration;
+      timerEl.textContent = `Sisa: ${pad(Math.floor(remaining/60))}:${pad(remaining%60)}`;
+      timerInterval = setInterval(()=>{
+        const elapsed = Math.floor((Date.now()-startTime)/1000);
+        const left = Math.max(0, settings.duration - elapsed);
+        remaining = left;
+        timerEl.textContent = `Sisa: ${pad(Math.floor(left/60))}:${pad(left%60)}`;
+        // progress
+        const percent = Math.round((elapsed / settings.duration)*100);
+        progEl.style.width = `${Math.min(100, percent)}%`;
+        if(left<=0){ stopTest(); }
+      },200);
+    }
+    function stopTimer(){ clearInterval(timerInterval); timerInterval=null; }
+
+    // --- Test control ---
+    function startTest(){
+      overlay.style.display='none';
+      problems = [];
+      curIndex = 0;
+      running = true;
+      // prefill a few problems to avoid latency
+      for(let i=0;i<8;i++) problems.push(genProblem());
+      renderProblem(problems[curIndex], curIndex);
+      startTimer();
+      problems[curIndex].tsStart = Date.now();
+    }
+
+    function pauseTest(){
+      if(!running) return;
+      running = false;
+      stopTimer();
+      hintText.textContent = 'Tes terjeda.';
+      pauseBtn.textContent = 'Lanjutkan';
+    }
+    function resumeTest(){
+      if(running) return;
+      running = true;
+      // shift startTime so remaining preserved
+      startTime = Date.now() - (settings.duration - remaining)*1000;
+      startTimer();
+      hintText.textContent = 'Lanjut...';
+      pauseBtn.textContent = 'Jeda';
+      // ensure current problem has start timestamp
+      if(!problems[curIndex].tsStart) problems[curIndex].tsStart = Date.now();
+      answerInput.focus();
+    }
+
+    function stopTest(){
+      running = false;
+      stopTimer();
+      questionBox.style.display='none';
+      endPanel.style.display='flex';
+      computeAnalysis();
+    }
+
+    function submitCurrent(auto=false){
+      if(!running && remaining<=0) return;
+      const raw = answerInput.value.trim();
+      const val = raw === '' ? null : Number(raw);
+      const p = problems[curIndex];
+      p.yourAnswer = val;
+      p.tsEnd = Date.now();
+      p.timeSec = p.tsEnd && p.tsStart ? Math.round((p.tsEnd - p.tsStart)/1000 * 10)/10 : null;
+      // Support entering only the units (satuan). If user entered a single digit equal to the units of the expected answer, treat as correct.
+      const answerStr = (p.answer != null) ? String(Math.abs(p.answer)) : '';
+      const valStr = (val != null) ? String(Math.abs(val)) : '';
+      p.correct = (val !== null) && (Number(val) === Number(p.answer) || (valStr.length === 1 && answerStr.slice(-1) === valStr.slice(-1)));
+      // prepare next
+      curIndex++;
+      // generate next on the fly
+      if(curIndex >= problems.length) problems.push(genProblem());
+      // set start timestamp for next
+      problems[curIndex].tsStart = Date.now();
+      // auto render next unless time up
+      if(remaining>0){ renderProblem(problems[curIndex], curIndex); }
+      else stopTest();
+    }
+
+    function skipCurrent(){
+      const p = problems[curIndex];
+      p.yourAnswer = null; p.skipped = true; p.tsEnd = Date.now(); p.timeSec = p.tsEnd && p.tsStart ? Math.round((p.tsEnd - p.tsStart)/1000 * 10)/10 : null;
+      curIndex++;
+      if(curIndex >= problems.length) problems.push(genProblem());
+      problems[curIndex].tsStart = Date.now();
+      if(remaining>0){ renderProblem(problems[curIndex], curIndex); }
+      else stopTest();
+    }
+
+    // --- Analysis ---
+    function computeAnalysis(){
+      const total = problems.filter(p=>p.tsEnd).length;
+      const answered = problems.filter(p=>p.tsEnd && (p.yourAnswer!=null));
+      const correct = answered.filter(p=>p.correct).length;
+      const skipped = problems.filter(p=>p.skipped).length;
+      const wrong = total - correct - skipped;
+      const accuracy = total? Math.round((correct/total)*100):0;
+      const avgTime = answered.length? (answered.reduce((s,p)=>s + (p.timeSec||0),0)/answered.length).toFixed(2) : '-';
+      const fastest = answered.length? Math.min(...answered.map(p=>p.timeSec||9999)) : '-';
+      const slowest = answered.length? Math.max(...answered.map(p=>p.timeSec||0)) : '-';
+      // longest correct streak
+      let streak=0,longest=0; for(let i=0;i<problems.length;i++){ if(problems[i].correct) { streak++; if(streak>longest) longest=streak } else streak=0 }
+
+      // Build UI
+      resultSummary.innerHTML='';
+      const summary = document.createElement('div'); summary.className='row'; summary.innerHTML = `<div>Skor (benar)</div><div style="font-weight:700">${correct}/${total} (${accuracy}%)</div>`; resultSummary.appendChild(summary);
+      const timeRow = document.createElement('div'); timeRow.className='row'; timeRow.innerHTML = `<div>Rata-rata waktu / soal</div><div style="font-weight:700">${avgTime} s</div>`; resultSummary.appendChild(timeRow);
+      const countRow = document.createElement('div'); countRow.className='row'; countRow.innerHTML = `<div>Soal dijawab</div><div style="font-weight:700">${total}</div>`; resultSummary.appendChild(countRow);
+      const skippedRow = document.createElement('div'); skippedRow.className='row'; skippedRow.innerHTML = `<div>Soal dilewatkan</div><div style="font-weight:700">${skipped}</div>`; resultSummary.appendChild(skippedRow);
+      const wrongRow = document.createElement('div'); wrongRow.className='row'; wrongRow.innerHTML = `<div>Soal salah</div><div style="font-weight:700">${wrong}</div>`; resultSummary.appendChild(wrongRow);
+      const streakRow = document.createElement('div'); streakRow.className='row'; streakRow.innerHTML = `<div>Longest correct streak</div><div style="font-weight:700">${longest}</div>`; resultSummary.appendChild(streakRow);
+      const fastRow = document.createElement('div'); fastRow.className='row'; fastRow.innerHTML = `<div>Waktu tercepat</div><div style="font-weight:700">${fastest} s</div>`; resultSummary.appendChild(fastRow);
+      const slowRow = document.createElement('div'); slowRow.className='row'; slowRow.innerHTML = `<div>Waktu terlama</div><div style="font-weight:700">${slowest} s</div>`; resultSummary.appendChild(slowRow);
+
+      // Recommendations
+      const rec = document.createElement('div'); rec.style.marginTop='8px'; rec.innerHTML = `<div style="font-weight:700;margin-bottom:6px">Rekomendasi</div><div class="small">Jika akurasi rendah tapi waktu per soal singkat → hentikan memaksakan kecepatan, fokus latihan dengan durasi lebih pendek dan target akurasi ≥ 80%. Jika akurasi tinggi dan waktu lama → latihan percepatan.</div>`;
+      resultSummary.appendChild(rec);
+
+      // download payload
+      const payload = {timestamp:new Date().toISOString(), settings, total, correct, wrong, skipped, accuracy, avgTimeSeconds: avgTime, fastest, slowest, longestStreak:longest, items: problems.map((p,i)=>({index:i+1,a:p.a,b:p.b,expected:p.answer,yourAnswer:p.yourAnswer,correct:p.correct,timeSec:p.timeSec,skipped:!!p.skipped,tsStart:p.tsStart?new Date(p.tsStart).toISOString():null,tsEnd:p.tsEnd?new Date(p.tsEnd).toISOString():null})) };
+      downloadBtn.onclick = ()=>{ const blob = new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'hasil_kraeplin.json'; a.click(); URL.revokeObjectURL(url); };
+
+      // show details table
+      const detailsContainer = document.createElement('div'); detailsContainer.style.marginTop='10px';
+      const title = document.createElement('div'); title.style.fontWeight='700'; title.textContent = 'Rincian soal'; detailsContainer.appendChild(title);
+
+      // table wrapper (no horizontal scroll; table wraps to fit)
+      const wrapper = document.createElement('div'); wrapper.className = 'table-wrapper';
+
+      const table = document.createElement('table'); table.className='detail-table';
+      const thead = document.createElement('thead'); thead.innerHTML = `<tr><th style="width:6%">No</th><th style="width:38%">Soal</th><th style="width:12%">Jawaban</th><th style="width:12%">Benar</th><th style="width:12%">Waktu (s)</th><th style="width:20%">Catatan</th></tr>`; table.appendChild(thead);
+      const tbody = document.createElement('tbody');
+      problems.forEach((p,i)=>{ if(!p.tsEnd) return; const tr=document.createElement('tr'); const note = p.skipped? 'Dilewatkan' : (p.correct? '✓' : '✕'); tr.innerHTML = `<td>${i+1}</td><td>${p.a} + ${p.b}</td><td>${p.yourAnswer ?? '—'}</td><td>${p.answer}</td><td>${p.timeSec ?? '—'}</td><td title="${note}">${note}</td>`; tbody.appendChild(tr); });
+      table.appendChild(tbody);
+      wrapper.appendChild(table);
+      detailsContainer.appendChild(wrapper);
+      resultSummary.appendChild(detailsContainer);
+    }
+
+    // --- events ---
+    startBtn.addEventListener('click', ()=>{ startTest(); });
+    settingsBtn.addEventListener('click', ()=>{ overlay.style.display='flex'; });
+
+    pauseBtn.addEventListener('click', ()=>{ if(running){ pauseTest(); } else { resumeTest(); } });
+
+    submitBtn.addEventListener('click', ()=>{ submitCurrent(true); });
+    skipBtn.addEventListener('click', ()=>{ skipCurrent(); });
+    retryBtn.addEventListener('click', ()=>{ location.reload(); });
+
+    // auto submit when input length matches expected digits OR on Enter
+    answerInput.addEventListener('input', (e)=>{
+      const val = e.target.value.replace(/[^0-9\-]/g,'');
+      e.target.value = val;
+      if(val === '') return;
+      // Auto-submit when user types at least one digit (satuan cukup) — for convenience.
+      // If user types more than 1 digit, also auto-submit when length >= expected length.
+      const expected = String(Math.abs(problems[curIndex].answer));
+      if(val.length >= 1){
+        // if user typed more than one digit, prefer full match length
+        if(val.length >= expected.length || val.length === 1){
+          submitCurrent(true);
+        }
+      }
+    });
+
+    answerInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); submitCurrent(true); } });
+
+    // mobile keyboard focus improvements (same as original)
+    let lastVVHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    window.addEventListener('resize', () => {
+      const currentVVHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+      if (currentVVHeight < lastVVHeight || Math.abs(currentVVHeight - lastVVHeight) < 120) { lastVVHeight = currentVVHeight; return; }
+      if (document.activeElement !== answerInput) { answerInput.focus(); }
+      lastVVHeight = currentVVHeight;
+    });
+
+    // safety: stop timer if pagehide
+    window.addEventListener('pagehide', ()=>{ stopTimer(); });
+
+  </script>
+</body>
+</html>
