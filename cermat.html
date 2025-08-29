@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+  <title>Tes Kecermatan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Yeseva+One&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg: #141818;
+      --frame: #f9f9f9;
+      --text: #f9f9f9;
+      --muted: rgba(249,249,249,0.7);
+      --accent: rgba(249,249,249,0.06);
+      --glass: rgba(255,255,255,0.04);
+      --success: #9be7a2;
+      --danger: #ff8b94;
+    }
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family: 'Josefin Sans', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding:18px 12px;
+    }
+
+    .phone {
+      width:420px; /* looks good on wide mobile screens in preview */
+      max-width:100%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+
+    header{
+      padding:18px 18px 14px 18px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.02), transparent);
+    }
+    .logo {
+      width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--glass);border:1px solid rgba(255,255,255,0.03);
+      font-family: 'Yeseva One', serif;color:var(--frame);font-size:18px
+    }
+    h1{font-family:'Yeseva One', serif;margin:0;font-size:18px;color:var(--frame);}    
+    p.subtitle{margin:0;font-size:12px;color:var(--muted)}
+
+    main{padding:18px;background:transparent;}
+
+    .card{
+      background: rgba(255,255,255,0.02);
+      border-radius:14px;
+      padding:16px;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+
+    .top-row{display:flex;gap:8px;align-items:center;justify-content:center;margin-bottom:10px}
+    .slot{flex:1;min-width:0;background:var(--glass);border-radius:10px;padding:10px 8px;text-align:center;border:1px solid rgba(255,255,255,0.03)}
+    .slot .label{font-size:12px;color:var(--muted);font-weight:600}
+    .slot .symbol{font-size:22px;font-weight:700;margin-top:6px;color:var(--frame)}
+
+    .question-box{min-height:120px;display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center;text-align:center}
+    .display-row{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;overflow:visible;padding:6px 4px}
+    .display-item{flex:0 1 calc(20% - 12px);min-height:48px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);font-size:22px;font-weight:700;padding:8px 12px;box-sizing:border-box}
+
+    .options-row{gap:2px;align-items:center;justify-content:space-between;flex-wrap:nowrap;overflow:hidden;padding:6px 4px} 
+    .choice-btn{margin:3px;flex-direction:row;gap:1px;align-items:center;justify-content:center;flex:0 0 calc(10% - 2px);min-width:0;padding:0px 0px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);font-weight:700;box-sizing:border-box;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .choice-btn .lbl{font-size:12px;color:var(--muted);min-width:3px}
+    .choice-btn .sym{display:none} 
+
+    .controls{display:flex;gap:12px;justify-content:space-between;align-items:stretch;margin-top:12px;flex-wrap:nowrap}
+    .controls > div{display:flex;flex-direction:column;gap:8px;flex:1;min-width:0}
+    .btn{background:var(--glass);border:1px solid rgba(255,255,255,0.04);padding:12px 14px;border-radius:10px;font-weight:600;color:var(--frame);font-size:14px;width:100%;flex:unset;text-align:center}
+    .btn.primary{background:linear-gradient(90deg, rgba(249,249,249,0.06), rgba(249,249,249,0.03));}
+    .btn.ghost{background:transparent;border-color:rgba(255,255,255,0.02)}
+
+    .progress{height:8px;background:rgba(255,255,255,0.03);border-radius:8px;overflow:hidden}
+    .progress > i{display:block;height:100%;background:linear-gradient(90deg, rgba(249,249,249,0.2), rgba(249,249,249,0.06));width:0%}
+
+    .footer{padding:12px 18px;font-size:12px;color:var(--muted);text-align:center}
+
+    .overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(180deg, rgba(20,24,24,0.9), rgba(20,24,24,0.95));z-index:60}
+    .overlay .panel{max-width:520px;width:100%;background:rgba(255,255,255,0.02);border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.04)}
+    .overlay h2{font-family:'Yeseva One',serif;margin:0 0 8px 0}
+    .small{font-size:13px;color:var(--muted);line-height:1.45}
+
+    .result{display:grid;gap:12px}
+    .result .row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+
+    .table-wrapper{width:100%;overflow:visible;border-radius:8px}
+    .detail-table{width:100%;border-collapse:collapse;margin-top:6px;min-width:0;table-layout:auto}
+    .detail-table th,.detail-table td{padding:8px 6px;text-align:left;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.03);color:var(--muted);white-space:normal;word-break:break-word}
+    .detail-table th{color:var(--frame);font-weight:600;font-size:13px}
+
+    @media (max-width:420px){
+      .phone{border-radius:12px}
+      .slot .symbol{font-size:18px}
+      .display-item{min-width:44px;min-height:44px;font-size:18px}
+      .choice-btn{min-width:72px;padding:8px}
+    }
+  </style>
+</head>
+<body>
+  <div class="phone" role="application">
+    <header>
+      <div class="logo">TK</div>
+      <div>
+        <h1>Tes Kecermatan</h1>
+        <p class="subtitle">Pilih simbol yang TIDAK ADA (A–E)</p>
+      </div>
+    </header>
+
+    <main>
+      <div class="card" id="app">
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div class="progress" aria-hidden><i id="prog"></i></div>
+
+          <div class="top-row" id="topRow"></div>
+
+          <div class="question-box" id="questionBox">
+            <div class="display-row" id="displayRow" aria-live="polite"></div>
+
+            <div class="options-row" id="optionsRow" role="group" aria-label="Pilihan A sampai E"></div>
+
+            <div class="controls" style="width:100%">
+              <div>
+                <button class="btn ghost" id="pauseBtn">Jeda</button>
+                <button class="btn" id="skipBtn">Lewatkan</button>
+              </div>
+              <div>
+                <button class="btn ghost" id="settingsBtn">Pengaturan</button>
+                <button class="btn primary" id="startBtnInline">Mulai Tes</button>
+              </div>
+            </div>
+
+            <div style="width:100%;display:flex;justify-content:space-between;margin-top:6px">
+              <div class="hint" id="qCount">Soal 0</div>
+              <div class="hint" id="timer">Sisa: 03:00</div>
+            </div>
+
+          </div>
+
+          <div id="endPanel" style="display:none" class="question-box">
+            <div class="sequence">Hasil Tes Kecermatan</div>
+            <div class="hint">Ringkasan performa. Unduh JSON untuk analisis lebih lanjut.</div>
+            <div class="card result" id="resultSummary"></div>
+            <div style="display:flex;gap:8px;justify-content:center;margin-top:8px">
+              <button class="btn" id="retryBtn">Ulangi</button>
+              <button class="btn primary" id="downloadBtn">Unduh Hasil (JSON)</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+    <div class="footer">Abimanyu 2025</div>
+  </div>
+
+  <!-- Overlay: settings -->
+  <div class="overlay" id="overlay">
+    <div class="panel">
+      <h2>Instruksi & Pengaturan</h2>
+      <p class="small">Di atas terdapat 5 simbol diberi label A–E. Setiap soal menampilkan 4 dari 5 simbol tersebut. Tenentukan simbol yang <strong>tidak ditampilkan</strong> dengan memilih A, B, C, D, atau E.
+      </p>
+
+      <div style="display:flex;gap:8px;flex-direction:column;margin-top:12px">
+        <label class="small">Durasi:</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <label class="btn ghost" style="padding:8px 10px"><input type="radio" name="duration" value="60"> 1 menit</label>
+          <label class="btn ghost" style="padding:8px 10px"><input type="radio" name="duration" value="120"> 2 menit</label>
+          <label class="btn ghost" style="padding:8px 10px"><input type="radio" name="duration" value="180" checked> 3 menit</label>
+          <label class="btn ghost" style="padding:8px 10px"><input type="radio" name="duration" value="240"> 4 menit</label>
+          <label class="btn ghost" style="padding:8px 10px"><input type="radio" name="duration" value="300"> 5 menit</label>
+        </div>
+
+        <label class="small">Tipe simbol:</label>
+        <div style="display:flex;gap:8px;">
+          <label class="btn ghost" style="padding:8px 10px"><input type="radio" name="mode" value="numbers" checked> Angka (0–9)</label>
+          <label class="btn ghost" style="padding:8px 10px"><input type="radio" name="mode" value="greek"> Greek (α β γ ...)</label>
+        </div>
+
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+          <button class="btn primary" id="startBtn">Mulai Tes</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Utilities
+    function randInt(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+    function pad(n){return String(n).padStart(2,'0')}
+
+    // State
+    let settings = {duration:180, mode:'numbers'};
+    let running=false, startTime=null, timerInterval=null, remaining=180;
+    let symbols = []; // 5 symbols
+    let problems = []; // {omittedIndex, shown, correctLabel, chosenLabel, tsStart, tsEnd, timeSec}
+    let curIndex=0;
+
+    // DOM
+    const overlay = document.getElementById('overlay');
+    const topRow = document.getElementById('topRow');
+    const displayRow = document.getElementById('displayRow');
+    const optionsRow = document.getElementById('optionsRow');
+    const qCount = document.getElementById('qCount');
+    const timerEl = document.getElementById('timer');
+    const progEl = document.getElementById('prog');
+    const startBtn = document.getElementById('startBtn');
+    const startBtnInline = document.getElementById('startBtnInline');
+    const settingsBtn = document.getElementById('settingsBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const skipBtn = document.getElementById('skipBtn');
+    const endPanel = document.getElementById('endPanel');
+    const questionBox = document.getElementById('questionBox');
+    const resultSummary = document.getElementById('resultSummary');
+    const retryBtn = document.getElementById('retryBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    // bind radios
+    document.querySelectorAll('input[name="duration"]').forEach(r=>r.addEventListener('change', e=>settings.duration=Number(e.target.value)));
+    document.querySelectorAll('input[name="mode"]').forEach(r=>r.addEventListener('change', e=>settings.mode=e.target.value));
+
+    // symbol pools
+    const greekPool = ['α','β','γ','δ','ε','ζ','η','θ','ι','κ','λ','μ','ν','ξ','ο','π','ρ','σ','τ','υ','φ','χ','ψ','ω'];
+
+    function pickUnique(arr,n){ const out=[]; const copy = arr.slice(); while(out.length<n && copy.length){ const i = randInt(0, copy.length-1); out.push(copy.splice(i,1)[0]); } return out; }
+
+    function genSymbols(){
+      if(settings.mode==='numbers'){
+        const digits = Array.from({length:10},(_,i)=>String(i));
+        symbols = pickUnique(digits,5);
+      } else {
+        symbols = pickUnique(greekPool,5);
+      }
+      renderTopSymbols();
+    }
+
+    function renderTopSymbols(){
+      topRow.innerHTML='';
+      const labels = ['A','B','C','D','E'];
+      for(let i=0;i<5;i++){
+        const slot = document.createElement('div'); slot.className='slot';
+        slot.innerHTML = `<div class="label">${labels[i]}</div><div class="symbol">${symbols[i]}</div>`;
+        topRow.appendChild(slot);
+      }
+    }
+
+    function genProblem(){
+      // choose omitted index 0..4
+      const omitted = randInt(0,4);
+      const shown = symbols.filter((s,idx)=>idx!==omitted);
+      // shuffle shown order
+      for(let i=shown.length-1;i>0;i--){ const j = randInt(0,i); [shown[i],shown[j]] = [shown[j],shown[i]]; }
+      return {omittedIndex:omitted, shown, correctLabel: ['A','B','C','D','E'][omitted]};
+    }
+
+    function renderProblem(obj, idx){
+      qCount.textContent = `Soal ${idx+1}`;
+      displayRow.innerHTML = '';
+      // show the four symbols (in one row container; horizontal scroll allowed on narrow screens)
+      obj.shown.forEach(s =>{ const el = document.createElement('div'); el.className='display-item'; el.textContent = s; displayRow.appendChild(el); });
+
+      // render option buttons A..E with symbol previews
+      optionsRow.innerHTML = '';
+      const labels = ['A','B','C','D','E'];
+      for(let i=0;i<5;i++){
+        const btn = document.createElement('button'); btn.className='choice-btn'; btn.dataset.label = labels[i];
+        const sym = symbols[i];
+        btn.innerHTML = '<div class="lbl">' + labels[i] + '</div>'; 
+        btn.addEventListener('click', ()=> chooseOption(labels[i]));
+        optionsRow.appendChild(btn);
+      }
+      // focus first option for keyboard users
+      const firstBtn = optionsRow.querySelector('button'); if(firstBtn) firstBtn.focus();
+    }
+
+    function startTimer(){
+      startTime = Date.now(); remaining = settings.duration; timerEl.textContent = `Sisa: ${pad(Math.floor(remaining/60))}:${pad(remaining%60)}`;
+      progEl.style.width = '0%';
+      timerInterval = setInterval(()=>{
+        const elapsed = Math.floor((Date.now()-startTime)/1000);
+        const left = Math.max(0, settings.duration - elapsed);
+        remaining = left;
+        timerEl.textContent = `Sisa: ${pad(Math.floor(left/60))}:${pad(left%60)}`;
+        const percent = Math.round((elapsed / settings.duration)*100);
+        progEl.style.width = `${Math.min(100, percent)}%`;
+        if(left<=0){ stopTest(); }
+      },200);
+    }
+    function stopTimer(){ clearInterval(timerInterval); timerInterval=null; }
+
+    function startTest(){
+      overlay.style.display='none';
+      problems = [];
+      curIndex = 0;
+      running = true;
+      genSymbols();
+      // pre-generate a few problems
+      for(let i=0;i<10;i++) problems.push(genProblem());
+      renderProblem(problems[curIndex], curIndex);
+      problems[curIndex].tsStart = Date.now();
+      startTimer();
+    }
+
+    function pauseTest(){ if(!running) return; running=false; stopTimer(); pauseBtn.textContent='Lanjutkan'; }
+    function resumeTest(){ if(running) return; running=true; pauseBtn.textContent='Jeda'; // preserve remaining
+      startTime = Date.now() - (settings.duration - remaining)*1000; startTimer(); if(!problems[curIndex].tsStart) problems[curIndex].tsStart = Date.now(); }
+
+    function stopTest(){ running=false; stopTimer(); questionBox.style.display='none'; endPanel.style.display='flex'; computeAnalysis(); }
+
+    function chooseOption(lbl){ if(!running) return; const p = problems[curIndex]; p.chosenLabel = lbl; p.tsEnd = Date.now(); p.timeSec = Math.round((p.tsEnd - p.tsStart)/1000 * 10)/10; p.correct = (lbl === p.correctLabel);
+      curIndex++;
+      if(curIndex >= problems.length) problems.push(genProblem());
+      problems[curIndex].tsStart = Date.now();
+      if(remaining>0){ renderProblem(problems[curIndex], curIndex); }
+      else stopTest();
+    }
+
+    function skipCurrent(){ if(!running) return; const p = problems[curIndex]; p.skipped = true; p.tsEnd = Date.now(); p.timeSec = p.tsEnd && p.tsStart? Math.round((p.tsEnd - p.tsStart)/1000 * 10)/10 : null; curIndex++; if(curIndex >= problems.length) problems.push(genProblem()); problems[curIndex].tsStart = Date.now(); if(remaining>0) renderProblem(problems[curIndex], curIndex); else stopTest(); }
+
+    function computeAnalysis(){
+      const total = problems.filter(p=>p.tsEnd).length;
+      const answered = problems.filter(p=>p.tsEnd && (p.chosenLabel!=null));
+      const correct = answered.filter(p=>p.correct).length;
+      const skipped = problems.filter(p=>p.skipped).length;
+      const wrong = total - correct - skipped;
+      const accuracy = total? Math.round((correct/total)*100):0;
+      const avgTime = answered.length? (answered.reduce((s,p)=>s + (p.timeSec||0),0)/answered.length).toFixed(2) : '-';
+      const fastest = answered.length? Math.min(...answered.map(p=>p.timeSec||9999)) : '-';
+      const slowest = answered.length? Math.max(...answered.map(p=>p.timeSec||0)) : '-';
+      let streak=0,longest=0; for(let i=0;i<problems.length;i++){ if(problems[i].correct) { streak++; if(streak>longest) longest=streak } else streak=0 }
+
+      resultSummary.innerHTML='';
+      const summary = document.createElement('div'); summary.className='row'; summary.innerHTML = `<div>Skor (benar)</div><div style="font-weight:700">${correct}/${total} (${accuracy}%)</div>`; resultSummary.appendChild(summary);
+      const timeRow = document.createElement('div'); timeRow.className='row'; timeRow.innerHTML = `<div>Rata-rata waktu / soal</div><div style="font-weight:700">${avgTime} s</div>`; resultSummary.appendChild(timeRow);
+      const countRow = document.createElement('div'); countRow.className='row'; countRow.innerHTML = `<div>Soal dijawab</div><div style="font-weight:700">${total}</div>`; resultSummary.appendChild(countRow);
+      const skippedRow = document.createElement('div'); skippedRow.className='row'; skippedRow.innerHTML = `<div>Soal dilewatkan</div><div style="font-weight:700">${skipped}</div>`; resultSummary.appendChild(skippedRow);
+      const wrongRow = document.createElement('div'); wrongRow.className='row'; wrongRow.innerHTML = `<div>Soal salah</div><div style="font-weight:700">${wrong}</div>`; resultSummary.appendChild(wrongRow);
+      const streakRow = document.createElement('div'); streakRow.className='row'; streakRow.innerHTML = `<div>Longest correct streak</div><div style="font-weight:700">${longest}</div>`; resultSummary.appendChild(streakRow);
+      const fastRow = document.createElement('div'); fastRow.className='row'; fastRow.innerHTML = `<div>Waktu tercepat</div><div style="font-weight:700">${fastest} s</div>`; resultSummary.appendChild(fastRow);
+      const slowRow = document.createElement('div'); slowRow.className='row'; slowRow.innerHTML = `<div>Waktu terlama</div><div style="font-weight:700">${slowest} s</div>`; resultSummary.appendChild(slowRow);
+
+      const rec = document.createElement('div'); rec.style.marginTop='8px'; rec.innerHTML = `<div style="font-weight:700;margin-bottom:6px">Rekomendasi</div><div class="small">Jika akurasi rendah → fokus latihan akurasi dengan durasi lebih pendek. Jika akurasi tinggi tapi lambat → latih percepatan.</div>`;
+      resultSummary.appendChild(rec);
+
+      const payload = {timestamp:new Date().toISOString(), settings, total, correct, wrong, skipped, accuracy, avgTimeSeconds: avgTime, fastest, slowest, longestStreak:longest, items: problems.map((p,i)=>({index:i+1, shown:p.shown, omittedIndex:p.omittedIndex, correctLabel:p.correctLabel, chosenLabel:p.chosenLabel, correct:p.correct, skipped:!!p.skipped, timeSec:p.timeSec, tsStart:p.tsStart?new Date(p.tsStart).toISOString():null, tsEnd:p.tsEnd?new Date(p.tsEnd).toISOString():null})) };
+      downloadBtn.onclick = ()=>{ const blob = new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'hasil_kecermatan.json'; a.click(); URL.revokeObjectURL(url); };
+
+      // show details
+      const detailsContainer = document.createElement('div'); detailsContainer.style.marginTop='10px';
+      const title = document.createElement('div'); title.style.fontWeight='700'; title.textContent = 'Rincian soal'; detailsContainer.appendChild(title);
+      const wrapper = document.createElement('div'); wrapper.className = 'table-wrapper';
+      const table = document.createElement('table'); table.className='detail-table';
+      const thead = document.createElement('thead'); thead.innerHTML = `<tr><th style="width:6%">No</th><th style="width:40%">Simbol (ditampilkan)</th><th style="width:12%">Jawaban</th><th style="width:12%">Benar</th><th style="width:12%">Waktu (s)</th><th style="width:18%">Catatan</th></tr>`; table.appendChild(thead);
+      const tbody = document.createElement('tbody');
+      problems.forEach((p,i)=>{ if(!p.tsEnd) return; const tr=document.createElement('tr'); const note = p.skipped? 'Dilewatkan' : (p.correct? '✓' : '✕'); tr.innerHTML = `<td>${i+1}</td><td>${p.shown.join(' , ')}</td><td>${p.chosenLabel ?? '—'}</td><td>${p.correctLabel}</td><td>${p.timeSec ?? '—'}</td><td title="${note}">${note}</td>`; tbody.appendChild(tr); });
+      table.appendChild(tbody); wrapper.appendChild(table); detailsContainer.appendChild(wrapper); resultSummary.appendChild(detailsContainer);
+    }
+
+    // events
+    document.querySelectorAll('input[name="duration"]').forEach(r=>r.addEventListener('change', e=>settings.duration=Number(e.target.value)));
+    document.querySelectorAll('input[name="mode"]').forEach(r=>r.addEventListener('change', e=>settings.mode=e.target.value));
+
+    startBtn.addEventListener('click', ()=>{ startTest(); });
+    startBtnInline.addEventListener('click', ()=>{ startTest(); });
+    settingsBtn.addEventListener('click', ()=>{ overlay.style.display='flex'; });
+    pauseBtn.addEventListener('click', ()=>{ if(running) pauseTest(); else resumeTest(); });
+    skipBtn.addEventListener('click', ()=>{ skipCurrent(); });
+    retryBtn.addEventListener('click', ()=>{ location.reload(); });
+
+    // Stop timer if page hidden
+    window.addEventListener('pagehide', ()=>{ stopTimer(); });
+    window.addEventListener('beforeunload', ()=>{ stopTimer(); });
+  </script>
+</body>
+</html>
