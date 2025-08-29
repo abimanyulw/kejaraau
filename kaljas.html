@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+  <title>Kalkulator Jasmani</title>
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Yeseva+One&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg: #141818;
+      --frame: #f9f9f9;
+      --text: #f9f9f9;
+      --muted: rgba(249,249,249,0.7);
+      --accent: rgba(249,249,249,0.06);
+      --glass: rgba(255,255,255,0.04);
+      --success: #9be7a2;
+      --danger: #ff8b94;
+    }
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family: 'Josefin Sans', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding:18px 12px;
+    }
+
+    .phone {
+      width:420px; /* looks good on wide mobile screens in preview */
+      max-width:100%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+
+    header{
+      padding:18px 18px 14px 18px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.02), transparent);
+    }
+    .logo {
+      width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--glass);border:1px solid rgba(255,255,255,0.03);
+      font-family: 'Yeseva One', serif;color:var(--frame);font-size:18px
+    }
+    h1{font-family:'Yeseva One', serif;margin:0;font-size:18px;color:var(--frame);}
+    p.subtitle{margin:0;font-size:12px;color:var(--muted)}
+
+    main{padding:18px;background:transparent;}
+
+    .card{
+      background: rgba(255,255,255,0.02);
+      border-radius:14px;
+      padding:16px;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+
+    .title-row{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+    .desc{font-size:13px;color:var(--muted);line-height:1.45}
+
+    .iframe-wrap{width:100%;height:520px;background:var(--accent);border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.03)}
+    .iframe-wrap iframe{width:100%;height:100%;border:0;display:block}
+
+    .footer{padding:12px 18px;font-size:12px;color:var(--muted);text-align:center}
+
+    @media (max-width:420px){
+      .phone{border-radius:12px}
+      .iframe-wrap{height:420px}
+    }
+  </style>
+</head>
+<body>
+  <div class="phone" role="application">
+    <header>
+      <div class="logo">KJ</div>
+      <div>
+        <h1>Kalkulator Jasmani</h1>
+        <p class="subtitle">Kalkulator Fisik</p>
+      </div>
+    </header>
+
+    <main>
+      <div class="card">
+        <div class="title-row">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:700">Kalkulator Jasmani</div>
+            <div style="font-size:12px;color:var(--muted)">Standar TNI</div>
+          </div>
+          <div class="desc">Kalkulator ini dibuat khusus sesuai standar untuk menghitung nilai skor latihan fisik calon peserta tes masuk TNI.</div>
+        </div>
+
+        <div class="iframe-wrap" aria-label="Kalkulator Jasmani embedded">
+          <iframe src="https://kalkulator.tacticalinpolice.com/kalkulator/jasmani/tni" title="Kalkulator Jasmani TNI" loading="eager" referrerpolicy="no-referrer"></iframe>
+        </div>
+
+        <div style="margin-top:10px;text-align:center;color:var(--muted);font-size:13px">Jika iframe tidak muncul, buka <a href="https://kalkulator.tacticalinpolice.com/kalkulator/jasmani/tni" target="_blank" rel="noopener" style="color:var(--frame)">tautan kalkulator</a></div>
+
+      </div>
+    </main>
+
+    <div class="footer">Abimanyu 2025</div>
+  </div>
+</body>
+</html>
