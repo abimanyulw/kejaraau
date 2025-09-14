@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
-  <title>Beranda — Aplikasi Latihan</title>
+  <title>KEJAR AAU</title>
   <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Yeseva+One&display=swap" rel="stylesheet">
   <style>
     :root{
@@ -212,8 +212,7 @@
           <div class="muted">Memuat soal hari ini…</div>
         </div>
 
-        <div style="margin-top:10px" class="muted">
-          </div>
+       
       </div>
 
       <!-- existing card: Materi-Materi -->
@@ -460,16 +459,19 @@ renderQuestionInContainer(q, container);
       renderMath();
     }
 
-    // reset button for testing (clears today's local flag and reloads)
-    document.getElementById('daily-reset').addEventListener('click', ()=>{
-      if (!confirm('Reset local penyelesaian hari ini? (hanya untuk testing)')) return;
-      localStorage.removeItem(doneKey());
-      loadDailyQuestion();
-    });
+   // reset button for testing (clears today's local flag and reloads) — safe if element removed
+const resetBtn = document.getElementById('daily-reset');
+if (resetBtn) {
+  resetBtn.addEventListener('click', ()=>{
+    if (!confirm('Reset local penyelesaian hari ini? (hanya untuk testing)')) return;
+    localStorage.removeItem(doneKey());
+    loadDailyQuestion();
+  });
+}
+
 
     // on load
     loadDailyQuestion();
   </script>
 </body>
 </html>
-
