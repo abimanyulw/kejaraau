@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Input Soal — Kuis (Admin)</title>
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #0f172a;
+      --card: #0b1220;
+      --muted: #94a3b8;
+      --accent: #06b6d4;
+      --glass: rgba(255,255,255,0.03);
+      --radius: 12px;
+    }
+    *{box-sizing:border-box}
+    body{
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      margin:0; min-height:100vh; background: linear-gradient(180deg,#071020 0%, #081226 60%);
+      color:#e6eef8; padding:28px;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    .container{ max-width:1100px; margin:0 auto; display:grid; grid-template-columns: 1fr 420px; gap:20px; align-items:start; }
+    header{ grid-column: 1 / -1; display:flex; align-items:center; gap:14px; margin-bottom:6px; }
+    .logo{
+      width:56px; height:56px; border-radius:12px; background:linear-gradient(135deg,var(--accent),#60a5fa);
+      display:flex; align-items:center; justify-content:center; font-weight:700; color:#042027; box-shadow: 0 6px 18px rgba(6,182,212,0.12);
+      font-size:20px;
+    }
+    h1{ font-size:20px; margin:0; }
+    p.lead{ margin:0; color:var(--muted); font-size:13px; }
+
+    /* Card */
+    .card{ background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:var(--radius); padding:18px; box-shadow: 0 6px 18px rgba(2,6,23,0.6); }
+    .card .section-title{ font-size:14px; margin:0 0 10px 0; color:#cfe9f3; font-weight:600; }
+
+    form label{ display:block; font-weight:600; color:#cfe9f3; font-size:13px; margin-top:12px; }
+    input[type="text"], textarea, select{
+      width:100%; padding:10px 12px; margin-top:8px; border-radius:8px; background:var(--glass);
+      color: #e6eef8; border:1px solid rgba(255,255,255,0.04); resize:vertical;
+    }
+    input[type="text"]::placeholder, textarea::placeholder { color: #9fb1c3; }
+
+    .grid-2{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+    .toolbar{ display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+    .btn{
+      background:transparent; border:1px solid rgba(255,255,255,0.06); padding:8px 10px; border-radius:8px; color:#e6eef8;
+      cursor:pointer; font-weight:600; font-size:13px;
+    }
+    .btn.primary{ background:linear-gradient(90deg,var(--accent),#60a5fa); color:#042027; border:0; box-shadow: 0 8px 30px rgba(6,182,212,0.12); }
+    .btn.ghost{ background:transparent; border:1px dashed rgba(255,255,255,0.04); }
+
+    .meta-row{ display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+    .small{ font-size:13px; color:var(--muted); }
+
+    /* Preview */
+    .preview{
+      padding:12px; border-radius:10px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+      border:1px solid rgba(255,255,255,0.03); color:#e6eef8;
+    }
+    .preview h3{ margin:0 0 8px 0; font-size:15px; }
+    .divider{ height:1px; background: rgba(255,255,255,0.03); margin:12px 0; border-radius:2px; }
+
+    footer{ grid-column: 1 / -1; margin-top:18px; color:var(--muted); font-size:13px; text-align:center; }
+
+    /* responsive */
+    @media (max-width:1000px){
+      .container{ grid-template-columns: 1fr; }
+    }
+    /* helper small input for options multiline */
+    .option-input{ width:100%; padding:8px; border-radius:8px; background:var(--glass); border:1px solid rgba(255,255,255,0.03); color:#e6eef8; }
+    .hint{ font-size:12px; color:var(--muted); margin-top:6px; }
+  </style>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-analytics.js";
+    import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+
+    // ---- CONFIG: ganti sesuai config mu (sudah terisi) ----
+    const firebaseConfig = {
+      apiKey: "AIzaSyCpe4N09OKb3eI3s5cLzPS9Cczbg9F-XQc",
+      authDomain: "arise-63f67.firebaseapp.com",
+      databaseURL: "https://arise-63f67-default-rtdb.firebaseio.com",
+      projectId: "arise-63f67",
+      storageBucket: "arise-63f67.firebasestorage.app",
+      messagingSenderId: "847026490456",
+      appId: "1:847026490456:web:db415425da44af80918e2d",
+      measurementId: "G-KZ51MRKD3L"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    try { getAnalytics(app); } catch(e){ /* analytics may fail in some environments */ }
+
+    const db = getDatabase(app);
+
+    // ------------------ Utility: safe escape (for preview) -------------------
+    function escapeHtml(s=''){
+      return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+    }
+
+    // Convert text with paragraphs and math delimiters into HTML; preserves math sections
+    function textToHtmlKeepMath(raw=''){
+      if (!raw) return '';
+      // allow both inline \( ... \) and display $$ ... $$
+      // split by $$ to preserve display math
+      const parts = raw.split('$$');
+      const rebuilt = parts.map((part, idx) => {
+        if (idx % 2 === 1){
+          // inside display math
+          return `$$${part}$$`;
+        } else {
+          // outside display math: but may contain inline \( ... \)
+          // protect inline math by splitting on \( and \)
+          const inlineParts = part.split(/(\\\(|\\\))/);
+          // simpler approach: escape full part then replace escaped inline markers back
+          let esc = escapeHtml(part);
+          // restore \( and \) as is (they will be rendered by MathJax)
+          esc = esc.replaceAll('\\(','\\(').replaceAll('\\)','\\)');
+          // paragraphs: double newline => <p>, single newline => <br>
+          const paras = esc.split(/\r?\n\r?\n/).map(p => p.replace(/\r?\n/g, '<br>'));
+          return paras.map(p => `<p>${p}</p>`).join('');
+        }
+      }).join('');
+      return rebuilt;
+    }
+
+    // ------------------ MathJax: ensure accessible globally -------------------
+    window.renderMath = async function(){
+      if (window.MathJax && MathJax.typesetPromise) {
+        try { await MathJax.typesetPromise(); }
+        catch(e){ console.warn('MathJax error', e); }
+      }
+    };
+
+    // ------------------ Insert helpers for textareas (beginner-friendly) -------------------
+    // Keep track of last-focused textarea
+    let lastFocusedTA = null;
+    function attachFocusListeners(){
+      ['soal','optA','optB','optC','optD','optE','pembahasan'].forEach(id=>{
+        const el = document.getElementById(id);
+        if (el){
+          el.addEventListener('focus', ()=> lastFocusedTA = el);
+        }
+      });
+      // default focus
+      lastFocusedTA = document.getElementById('soal');
+    }
+
+    // wrap selection or insert text at caret
+    function insertAtCaret(text){
+      const ta = lastFocusedTA || document.getElementById('soal');
+      const start = ta.selectionStart || 0;
+      const end = ta.selectionEnd || 0;
+      const before = ta.value.substring(0,start);
+      const after = ta.value.substring(end);
+      ta.value = before + text + after;
+      // position caret after inserted snippet and focus
+      const pos = before.length + text.length;
+      ta.setSelectionRange(pos,pos);
+      ta.focus();
+      updatePreview(); // live update
+    }
+
+    // wrapper: insert display math $$...$$ or inline \( ... \)
+    function insertDisplayMath(template='c^2'){
+      insertAtCaret(`$$${template}$$`);
+    }
+    function insertInlineMath(template='x^2'){
+      insertAtCaret(`\\(${template}\\)`);
+    }
+
+    // common templates
+    function insertFrac(){ insertAtCaret('\\frac{a}{b}'); }
+    function insertSqrt(){ insertAtCaret('\\sqrt{ }'); }
+    function insertPower(){ insertAtCaret('^{ }'); }
+    function insertSub(){ insertAtCaret('_{ }'); }
+    function insertSum(){ insertAtCaret('\\sum_{n=1}^{N}'); }
+    function insertIntegral(){ insertAtCaret('\\int_{a}^{b}'); }
+    function insertAlpha(){ insertAtCaret('\\alpha'); }
+    function insertDegree(){ insertAtCaret('^\\circ'); }
+    function wrapSelectionWithDisplay(){
+      const ta = lastFocusedTA || document.getElementById('soal');
+      const start = ta.selectionStart || 0;
+      const end = ta.selectionEnd || 0;
+      if (start === end){
+        insertDisplayMath('c^2');
+      } else {
+        const sel = ta.value.substring(start,end);
+        const before = ta.value.substring(0,start);
+        const after = ta.value.substring(end);
+        ta.value = before + `$$${sel}$$` + after;
+        ta.setSelectionRange(before.length + (`$$${sel}$$`).length, before.length + (`$$${sel}$$`).length);
+        ta.focus();
+        updatePreview();
+      }
+    }
+
+    // keyboard shortcut: Ctrl+M => wrap selection with $$...$$
+    document.addEventListener('keydown', (ev)=>{
+      if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase()==='m'){
+        ev.preventDefault();
+        wrapSelectionWithDisplay();
+      }
+    });
+
+    // ------------------ Preview logic -------------------
+    async function updatePreview(){
+      const soal = document.getElementById('soal').value;
+      const opsi = [
+        document.getElementById('optA').value,
+        document.getElementById('optB').value,
+        document.getElementById('optC').value,
+        document.getElementById('optD').value,
+        document.getElementById('optE').value
+      ];
+      const mapel = document.getElementById('mapel').value;
+      const kunci = document.getElementById('kunci').value;
+      const pembahasan = document.getElementById('pembahasan').value;
+
+      document.getElementById('pv-meta').innerHTML = `<div class="small">Mata Pelajaran: <strong>${escapeHtml(mapel)}</strong> · Kunci: <strong>${escapeHtml(kunci)}</strong></div>`;
+      document.getElementById('pv-soal').innerHTML = textToHtmlKeepMath(soal) || '<span class="small">Belum ada isi soal</span>';
+      document.getElementById('pv-opsi').innerHTML = opsi.map((o,i)=>`<div style="margin-top:6px"><strong>${String.fromCharCode(65+i)}.</strong> ${textToHtmlKeepMath(o)}</div>`).join('') ;
+      document.getElementById('pv-pembahasan').innerHTML = textToHtmlKeepMath(pembahasan) || '<span class="small">Belum ada pembahasan</span>';
+      await window.renderMath();
+    }
+
+    // update preview as typing (throttle)
+    let previewTimer = null;
+    function schedulePreview(){
+      if (previewTimer) clearTimeout(previewTimer);
+      previewTimer = setTimeout(()=> updatePreview(), 250);
+    }
+
+    // ------------------ Submit to Firebase -------------------
+    async function submitSoal(e){
+      e.preventDefault();
+      const soal = document.getElementById('soal').value;
+      const opsi = [
+        document.getElementById('optA').value,
+        document.getElementById('optB').value,
+        document.getElementById('optC').value,
+        document.getElementById('optD').value,
+        document.getElementById('optE').value
+      ];
+      const mapel = document.getElementById('mapel').value;
+      const kunci = document.getElementById('kunci').value;
+      const pembahasan = document.getElementById('pembahasan').value;
+
+      if (!soal.trim()){
+        alert('Isi soal terlebih dulu.');
+        return;
+      }
+
+      const payload = { soal, opsi, mapel, kunci, pembahasan, createdAt: Date.now() };
+
+      try {
+        const listRef = ref(db, 'questions');
+        const newRef = push(listRef);
+        await set(newRef, payload);
+        alert('Soal berhasil disimpan (id: ' + newRef.key + ')');
+        document.getElementById('formSoal').reset();
+        updatePreview();
+      } catch(err){
+        console.error(err);
+        alert('Gagal menyimpan soal. Periksa Console / Database Rules. Error: ' + (err.message || err));
+      }
+    }
+
+    // ------------------ Test connection: try write minimal ping -------------------
+    async function testConnection(){
+      const btn = document.getElementById('testBtn');
+      btn.disabled = true; btn.innerText = 'Testing...';
+      try {
+        const pingRef = ref(db, 'admin-test/ping');
+        const newRef = push(pingRef);
+        await set(newRef, { ts: Date.now(), userAgent: navigator.userAgent });
+        // optionally remove the ping (cleanup)
+        // Note: removing requires import of remove(); skipping to avoid extra imports if rules disallow
+        alert('Test berhasil: data ditulis ke path admin-test/ping (cek Realtime DB).');
+      } catch(err){
+        console.error(err);
+        alert('Test gagal. Kemungkinan Database belum dibuat atau rules menolak. Error: ' + (err.message || err));
+      } finally {
+        btn.disabled = false; btn.innerText = 'Test Connection';
+      }
+    }
+
+    // on load
+    window.addEventListener('DOMContentLoaded', ()=>{
+      attachFocusListeners();
+      // wire inputs for live preview
+      ['soal','optA','optB','optC','optD','optE','pembahasan','mapel','kunci'].forEach(id=>{
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', schedulePreview);
+      });
+
+      // buttons in toolbar
+      document.getElementById('btnDisplayMath').addEventListener('click', ()=> insertDisplayMath('c^2'));
+      document.getElementById('btnInlineMath').addEventListener('click', ()=> insertInlineMath('x^2'));
+      document.getElementById('btnFrac').addEventListener('click', insertFrac);
+      document.getElementById('btnSqrt').addEventListener('click', insertSqrt);
+      document.getElementById('btnPower').addEventListener('click', insertPower);
+      document.getElementById('btnSub').addEventListener('click', insertSub);
+      document.getElementById('btnSum').addEventListener('click', insertSum);
+      document.getElementById('btnInt').addEventListener('click', insertIntegral);
+      document.getElementById('btnAlpha').addEventListener('click', insertAlpha);
+      document.getElementById('btnDegree').addEventListener('click', insertDegree);
+      document.getElementById('testBtn').addEventListener('click', testConnection);
+      document.getElementById('formSoal').addEventListener('submit', submitSoal);
+
+      // initial preview
+      updatePreview();
+    });
+
+    // export some functions for console debugging
+    window._admin = { updatePreview, insertAtCaret };
+  </script>
+
+  <!-- MathJax for rendering LaTeX -->
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">QZ</div>
+      <div>
+        <h1>Admin Input Soal</h1>
+        <p class="lead">Masukkan soal pilihan ganda, lengkap dengan LaTeX (mulai pemula). Tekan <kbd>Ctrl/Cmd + M</kbd> untuk cepat membungkus pilihan menjadi $$...$$.</p>
+      </div>
+    </header>
+
+    <!-- Form kiri -->
+    <div class="card">
+      <div class="section-title">Form Input Soal</div>
+      <form id="formSoal">
+        <label>Soal (gunakan double newline untuk paragraf)</label>
+        <textarea id="soal" rows="6" placeholder="Ketik soal. Contoh: Hitung integral $$\int_0^1 x^2 dx$$"></textarea>
+
+        <div class="toolbar" title="LaTeX helper — tinggal klik untuk sisipkan">
+          <button type="button" id="btnDisplayMath" class="btn">$$ Display</button>
+          <button type="button" id="btnInlineMath" class="btn">\(inline\)</button>
+          <button type="button" id="btnFrac" class="btn">½ (frac)</button>
+          <button type="button" id="btnSqrt" class="btn">√ (sqrt)</button>
+          <button type="button" id="btnPower" class="btn">^ (power)</button>
+          <button type="button" id="btnSub" class="btn">_ (sub)</button>
+          <button type="button" id="btnSum" class="btn">Σ (sum)</button>
+          <button type="button" id="btnInt" class="btn">∫ (int)</button>
+          <button type="button" id="btnAlpha" class="btn">α</button>
+          <button type="button" id="btnDegree" class="btn">°</button>
+          <div style="margin-left:auto; display:flex; gap:8px">
+            <button type="button" id="testBtn" class="btn ghost">Test Connection</button>
+            <button type="button" onclick="updatePreview()" class="btn ghost">Refresh Preview</button>
+          </div>
+        </div>
+        <div class="hint">Tip: Pilih teks lalu klik <strong>$$ Display</strong> untuk membungkus selection menjadi display math. Shortcut: Ctrl/Cmd + M</div>
+
+        <label style="margin-top:14px">Pilihan Jawaban (A–E)</label>
+        <div class="grid-2">
+          <div>
+            <input id="optA" class="option-input" placeholder="Pilihan A (boleh multiline)"/>
+          </div>
+          <div>
+            <input id="optB" class="option-input" placeholder="Pilihan B"/>
+          </div>
+          <div>
+            <input id="optC" class="option-input" placeholder="Pilihan C"/>
+          </div>
+          <div>
+            <input id="optD" class="option-input" placeholder="Pilihan D"/>
+          </div>
+          <div style="grid-column: 1 / -1;">
+            <input id="optE" class="option-input" placeholder="Pilihan E (opsional)"/>
+          </div>
+        </div>
+
+        <div class="meta-row">
+          <div style="flex:1">
+            <label>Mata Pelajaran</label>
+            <select id="mapel">
+              <option>Matematika</option>
+              <option>Kimia</option>
+              <option>Biologi</option>
+              <option>Fisika</option>
+              <option>Bahasa Indonesia</option>
+              <option>Bahasa Inggris</option>
+              <option>Wawasan Kebangsaan</option>
+            </select>
+          </div>
+          <div style="width:120px">
+            <label>Kunci Jawaban</label>
+            <select id="kunci">
+              <option>A</option><option>B</option><option>C</option><option>D</option><option>E</option>
+            </select>
+          </div>
+        </div>
+
+        <label>Pembahasan Panjang</label>
+        <textarea id="pembahasan" rows="6" placeholder="Tulis pembahasan lengkap. Gunakan LaTeX jika perlu."></textarea>
+        <div class="hint">Gunakan `$$...$$` untuk persamaan baris (display), atau `\( ... \)` untuk inline. Tombol di toolbar membantu membuat template LaTeX.</div>
+
+        <div style="display:flex; gap:10px; margin-top:14px; align-items:center;">
+          <button type="submit" class="btn primary">Simpan ke Firebase</button>
+          <button type="button" onclick="document.getElementById('formSoal').reset(); updatePreview();" class="btn">Reset</button>
+          <div style="margin-left:auto;" class="small">Simpan menyimpan teks mentah (incl. `$$` & newlines)</div>
+        </div>
+      </form>
+
+      <div style="margin-top:14px;" class="small">
+        Catatan: Untuk produksi, pasang Firebase Authentication dan atur Realtime Database Rules agar hanya admin dapat menulis. Untuk testing sementara, di Firebase Console -> Realtime Database -> Rules, kamu bisa ubah sementara menjadi `true` (tidak disarankan untuk publik).
+      </div>
+    </div>
+
+    <!-- Preview kanan -->
+    <aside class="card">
+      <div class="section-title">Preview Langsung</div>
+      <div id="pv-meta" class="small" style="margin-top:6px"></div>
+      <div class="divider"></div>
+
+      <div class="preview" style="max-height:60vh; overflow:auto;">
+        <h3>Soal</h3>
+        <div id="pv-soal" style="line-height:1.45"></div>
+
+        <div style="height:8px"></div>
+        <h3>Pilihan</h3>
+        <div id="pv-opsi"></div>
+
+        <div class="divider"></div>
+        <h3>Pembahasan</h3>
+        <div id="pv-pembahasan" style="line-height:1.45"></div>
+      </div>
+
+      <div style="margin-top:12px">
+        <div class="small">Preview merender LaTeX via MathJax. Jika persamaan belum muncul, klik <strong>Refresh Preview</strong> atau tunggu beberapa detik.</div>
+      </div>
+    </aside>
+
+    <footer>
+      Versi ringan admin input • Simpan ke path <code>questions/</code> pada Realtime Database. Butuh bantuan set rules / ubah ke Cloud Firestore? bilang saja.
+    </footer>
+  </div>
+
+  <script>
+    // minimal: ensure preview updates when focus moves (attach in-module script)
+    // Because Firebase module was loaded earlier, updatePreview is available via window._admin or global functions
+    // We'll call updatePreview from inputs via oninput already set in module.
+    // No extra script needed here.
+  </script>
+</body>
+</html>
