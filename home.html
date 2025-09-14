@@ -61,6 +61,7 @@
       border-radius:14px;
       padding:16px;
       border:1px solid rgba(255,255,255,0.03);
+      margin-bottom:12px;
     }
 
     .section-title{font-weight:700;font-size:14px;color:var(--frame);margin-bottom:8px}
@@ -79,11 +80,69 @@
 
     .footer{padding:12px 18px;font-size:12px;color:var(--muted);text-align:center}
 
+    /* styles for daily question */
+    .q-title{ font-weight:700; font-size:15px; margin-bottom:8px; color:var(--frame) }
+    .q-body{ font-size:14px; color:var(--text); line-height:1.45; margin-bottom:10px }
+    .opts{ display:flex; flex-direction:column; gap:8px; margin-top:6px }
+    .opt-btn{ text-align:left; padding:10px 12px; border-radius:10px; background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.03); cursor:pointer; color:var(--text); font-weight:600 }
+    .opt-btn.disabled{ opacity:0.6; cursor:not-allowed }
+    .result { margin-top:10px; padding:10px; border-radius:8px; }
+    .result.correct{ background: rgba(155,231,162,0.12); border:1px solid rgba(155,231,162,0.18); color:var(--success) }
+    .result.wrong{ background: rgba(255,139,148,0.08); border:1px solid rgba(255,139,148,0.12); color:var(--danger) }
+    .muted{ color:var(--muted); font-size:13px }
+
     @media (max-width:420px){
       .phone{border-radius:12px}
       .menu-item{min-height:74px}
     }
+/* --- Compact option label (A., B., ...) --- */
+.opt-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;               /* jarak kecil antar label & teks opsi */
+  white-space: normal;    /* membolehkan teks turun baris kalau panjang */
+}
+
+/* beri lebar tetap agar label tidak mendorong teks dengan spasi tak konsisten */
+.opt-btn strong {
+  display: inline-block;
+  flex: 0 0 30px;        /* sesuaikan lebar label (A.) */
+  text-align: left;
+  margin: 0;             /* hilangkan margin bawaan */
+  padding-right: 2px;
+}
+
+/* jika teks opsi menghasilkan <p> (karena fungsi textToHtmlKeepMath),
+   pastikan paragraf di dalam tombol tidak memberi margin berlebih */
+.opt-btn p { margin: 0; }
+
+/* --- Letakkan pembahasan di bawah tombol (override inline style) --- */
+#q-actions {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 8px !important;
+  margin-top: 10px !important;
+}
+
+/* buat tombol pembahasan tetap di atas area pembahasan */
+#btn-show-pembahasan {
+  align-self: flex-start;
+}
+
+/* sedikit jarak untuk area pembahasan */
+#pembahasan-area { margin-top: 6px; }
+
+/* penyesuaian responsif kecil */
+@media (max-width:420px){
+  .opt-btn { gap: 6px; }
+  .opt-btn strong { flex: 0 0 26px; }
+}
+
   </style>
+
+  <!-- MathJax untuk render LaTeX -->
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
   <div class="phone" role="application">
@@ -96,7 +155,8 @@
     </header>
 
     <main>
-      <div class="card" style="margin-bottom:12px">
+      <!-- existing card: Latihan Dasar -->
+      <div class="card">
         <div class="section-title">Latihan Dasar</div>
         <div class="section-sub">Pilih modul latihan untuk mulai berlatih.</div>
         <div class="menu-grid">
@@ -116,13 +176,14 @@
             <a href="deret.html" aria-label="Buka Tes Deret Angka">Buka</a>
           </div>
 
-<div class="menu-item">
+          <div class="menu-item">
             <div>
               <h3>3. Kalkulator Jasmani</h3><br>
               <p>Kalkulator ini dibuat khusus sesuai standar untuk menghitung nilai skor latihan fisik calon peserta tes masuk TNI. </p>
             </div>
             <a href="kaljas.html" aria-label="Buka Tes Deret Angka">Buka</a>
-</div>
+          </div>
+
           <div class="menu-item">
             <div>
               <h3>4. Tes Kecermatan</h3><br>
@@ -130,22 +191,37 @@
             </div>
             <a href="cermat.html" aria-label="Buka Tes Deret Angka">Buka</a>
           </div>
-            <div class="menu-item">
+
+          <div class="menu-item">
             <div>
               <h3>5. Tes Psikotes Teknikal</h3><br>
               <p>Tes ini dirancang untuk mengukur kemampuan logika, verbal, dan kualitatif analitis</p>
             </div>
             <a href="teknikal.html" aria-label="Buka Tes Deret Angka">Buka</a>
           </div>
-          
         </div>
       </div>
 
+      <!-- NEW: Hari Ini 1 Soal -->
+      <div class="card" id="daily-card">
+        <div class="section-title">1 Hari 1 Soal</div>
+        <div class="section-sub">Soal untuk hari ini</div>
+
+        <div id="daily-inner">
+          <!-- konten akan diisi oleh JS -->
+          <div class="muted">Memuat soal hari ini…</div>
+        </div>
+
+        <div style="margin-top:10px" class="muted">
+          <button id="daily-reset" style="padding:8px 10px;border-radius:10px;background:var(--glass);border:1px solid rgba(255,255,255,0.03);color:var(--frame);cursor:pointer">Reset (testing)</button>
+        </div>
+      </div>
+
+      <!-- existing card: Materi-Materi -->
       <div class="card">
         <div class="section-title">Materi-Materi</div>
         <div class="section-sub">Bahan belajar dan penjelasan singkat.</div>
         <div class="list">
-
           <div class="item">
             <div>
               <div class="title">Psikotes</div>
@@ -162,15 +238,13 @@
             <a href="https://drive.google.com/drive/folders/19YIhYl3TZIp4KVON1gO_mdRPQDEqnxmu" class="btn-link" aria-label="Buka Materi Akademik">Buka</a>
           </div>
 
-<div class="item">
+          <div class="item">
             <div>
               <div class="title">Ideologi dan Kebangsaan</div>
               <div class="meta">Pancasila dan UUD 1945</div>
             </div>
             <a href="https://drive.google.com/drive/folders/1GZm51XRZFI5LtcWzRd9FWaVElRu4SR1D" class="btn-link" aria-label="Buka Materi Akademik">Buka</a>
           </div>
-
-
         </div>
       </div>
     </main>
@@ -178,23 +252,224 @@
     <div class="footer">Abimanyu 2025</div>
   </div>
 
-  <script>
-    // small enhancement: smooth in-app anchor navigation
-    document.querySelectorAll('a[href^="#"]').forEach(a=>{
-      a.addEventListener('click', (e)=>{ e.preventDefault(); const id = a.getAttribute('href').slice(1);
-        // simple modal-like info for anchors (avoid external pages)
-        const modal = document.createElement('div'); modal.style.position='fixed'; modal.style.inset='0'; modal.style.background='linear-gradient(180deg, rgba(20,24,24,0.9), rgba(20,24,24,0.95))'; modal.style.display='flex'; modal.style.alignItems='center'; modal.style.justifyContent='center'; modal.style.zIndex=9999;
-        const panel = document.createElement('div'); panel.style.background='rgba(255,255,255,0.02)'; panel.style.border='1px solid rgba(255,255,255,0.03)'; panel.style.padding='18px'; panel.style.borderRadius='12px'; panel.style.maxWidth='420px'; panel.style.width='88%';
-        const h = document.createElement('h3'); h.textContent = id === 'psikotest' ? 'Materi Psikotes' : 'Materi Akademik'; h.style.fontFamily='Yeseva One, serif'; h.style.margin='0 0 8px 0';
-        const p = document.createElement('div'); p.style.color='var(--muted)'; p.style.fontSize='13px'; p.style.lineHeight='1.4'; p.textContent = id === 'psikotest' ? 'Kumpulan ringkasan jenis psikotes, tips pengerjaan, dan latihan singkat.' : 'Materi ringkas untuk latihan akademik: matematika dasar, logika, dan bahasa.';
-        const btn = document.createElement('button'); btn.textContent='Tutup'; btn.style.marginTop='12px'; btn.style.padding='10px 12px'; btn.style.borderRadius='10px'; btn.style.background='var(--glass)'; btn.style.border='1px solid rgba(255,255,255,0.04)'; btn.style.color='var(--frame)'; btn.addEventListener('click', ()=>document.body.removeChild(modal));
-        panel.appendChild(h); panel.appendChild(p); panel.appendChild(btn); modal.appendChild(panel); document.body.appendChild(modal);
-      })
-    })
+  <!-- Firebase + logic untuk Daily Question -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+
+    // --- CONFIG: pakai config yang sama seperti admin ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyCpe4N09OKb3eI3s5cLzPS9Cczbg9F-XQc",
+      authDomain: "arise-63f67.firebaseapp.com",
+      databaseURL: "https://arise-63f67-default-rtdb.firebaseio.com",
+      projectId: "arise-63f67",
+      storageBucket: "arise-63f67.firebasestorage.app",
+      messagingSenderId: "847026490456",
+      appId: "1:847026490456:web:db415425da44af80918e2d",
+      measurementId: "G-KZ51MRKD3L"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // helper: escape + convert teks (preserve $$...$$ and \( ... \))
+    function escapeHtml(s=''){ return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+    function textToHtmlKeepMath(raw=''){
+      if (!raw) return '';
+      // protect display $$ ... $$
+      const parts = raw.split('$$');
+      return parts.map((part, idx) => {
+        if (idx % 2 === 1) return `$$${part}$$`;
+        // outside $$: allow inline \(..\) by keeping backslashes, escape rest
+        let esc = escapeHtml(part);
+        esc = esc.replaceAll('\\(','\\(').replaceAll('\\)','\\)');
+        const paras = esc.split(/\r?\n\r?\n/).map(p => p.replace(/\r?\n/g,'<br>'));
+        return paras.map(p => `<p>${p}</p>`).join('');
+      }).join('');
+    }
+
+    // render math
+    async function renderMath(){
+      if (window.MathJax && MathJax.typesetPromise){
+        try { await MathJax.typesetPromise(); } catch(e){ console.warn(e); }
+      }
+    }
+
+    // utilities for date keys
+    function todayKey(){ // YYYY-MM-DD
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,'0');
+      const day = String(d.getDate()).padStart(2,'0');
+      return `${y}-${m}-${day}`;
+    }
+    function doneKey(){ return 'qz_done_' + todayKey(); }
+
+    // main: load questions and pick today's
+    async function loadDailyQuestion(){
+      const container = document.getElementById('daily-inner');
+      container.innerHTML = `<div class="muted">Memuat soal hari ini…</div>`;
+
+      try {
+        const snap = await get(ref(db, 'questions'));
+        if (!snap.exists()){
+          container.innerHTML = `<div class="muted">Belum ada soal di database. Tunggu admin menginput soal.</div>`;
+          return;
+        }
+
+        // build array of questions (only published if you use status)
+        const arr = [];
+        snap.forEach(ch => {
+          const val = ch.val(); val._id = ch.key;
+          // optional: only include published
+          if (!val.status || val.status === 'published') arr.push(val);
+        });
+
+        if (arr.length === 0){
+          container.innerHTML = `<div class="muted">Tidak ada soal yang dipublikasikan.</div>`;
+          return;
+        }
+
+       // pilih soal secara acak
+let q = arr[Math.floor(Math.random() * arr.length)];
+
+// jika user sudah menjawab hari ini, tunjukkan kembali soal yang sama (jika tersedia)
+// supaya jawaban yang tersimpan di localStorage tetap relevan dengan soal yang ditampilkan
+const done = localStorage.getItem(doneKey());
+if (done) {
+  try {
+    const doneObj = JSON.parse(done);
+    if (doneObj && doneObj.id) {
+      const prev = arr.find(item => item._id === doneObj.id);
+      if (prev) q = prev;
+    }
+  } catch (e) {
+    // kalau parse error, abaikan dan tetap gunakan soal acak
+    console.warn('Error parsing done flag', e);
+  }
+}
+
+renderQuestionInContainer(q, container);
+
+      } catch(err){
+        console.error(err);
+        container.innerHTML = `<div class="muted">Gagal memuat soal (periksa koneksi atau konfigurasi Firebase).</div>`;
+      }
+    }
+
+    // render question UI
+    function renderQuestionInContainer(q, container){
+      const done = localStorage.getItem(doneKey());
+      const answered = done ? JSON.parse(done) : null;
+
+      // build HTML
+      const html = `
+       
+        <div id="q-body" class="q-body">${textToHtmlKeepMath(q.soal || '')}</div>
+        <div id="q-opts" class="opts">
+          ${ (q.opsi || []).map((o,i)=> `<button data-idx="${i}" class="opt-btn" id="opt-${i}"><strong>${String.fromCharCode(65+i)}.</strong> ${textToHtmlKeepMath(o||'')}</button>`).join('') }
+        </div>
+
+        <div id="q-feedback"></div>
+
+        <div id="q-actions" style="margin-top:10px; display:flex; gap:8px; align-items:center">
+          <button id="btn-show-pembahasan" style="padding:8px 10px;border-radius:10px;background:var(--glass);border:1px solid rgba(255,255,255,0.03);color:var(--frame);cursor:pointer">Tampilkan Pembahasan</button>
+          <div id="pembahasan-area" style="flex:1"></div>
+        </div>
+      `;
+      container.innerHTML = html;
+
+      // disable inputs if already done
+      if (answered){
+        // mark selected and show result
+        const sel = answered.selected;
+        const correct = answered.correct;
+        disableOptionsAndShowResult(sel, correct, q);
+        // show pembahasan button enabled
+        document.getElementById('btn-show-pembahasan').addEventListener('click', ()=> {
+          showPembahasan(q);
+        });
+        return;
+      }
+
+      // otherwise attach click handlers
+      const optsEl = container.querySelectorAll('.opt-btn');
+      optsEl.forEach(btn=>{
+        btn.addEventListener('click', ()=> {
+          const idx = Number(btn.getAttribute('data-idx'));
+          handleAnswer(q, idx);
+        });
+      });
+
+      // pembahasan button: hidden until answer or allow viewing? We keep it disabled until answer
+      const pbBtn = document.getElementById('btn-show-pembahasan');
+      pbBtn.disabled = true;
+      pbBtn.style.opacity = 0.6;
+
+      // initial math render
+      renderMath();
+    }
+
+    // when user answers
+    function handleAnswer(q, idx){
+      const selectedLabel = String.fromCharCode(65+idx);
+      const correct = ( (q.kunci||'').toUpperCase() === selectedLabel );
+      // save to localStorage so user can't reattempt today
+      const payload = {
+        id: q._id || null,
+        selected: selectedLabel,
+        correct: !!correct,
+        answeredAt: Date.now()
+      };
+      localStorage.setItem(doneKey(), JSON.stringify(payload));
+
+      disableOptionsAndShowResult(selectedLabel, correct, q);
+    }
+
+    function disableOptionsAndShowResult(selectedLabel, correct, q){
+      // disable buttons
+      const btns = document.querySelectorAll('#q-opts .opt-btn');
+      btns.forEach(b=>{
+        b.classList.add('disabled');
+        b.disabled = true;
+        // highlight chosen
+        if (b.textContent.trim().startsWith(selectedLabel + '.')) {
+          b.style.borderColor = correct ? 'rgba(155,231,162,0.6)' : 'rgba(255,139,148,0.6)';
+          b.style.background = correct ? 'rgba(155,231,162,0.06)' : 'rgba(255,139,148,0.04)';
+        }
+        // highlight correct answer
+        if (b.textContent.trim().startsWith((q.kunci||'') + '.')) {
+          b.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+        }
+      });
+
+      const fb = document.getElementById('q-feedback');
+      fb.innerHTML = `<div class="result ${correct ? 'correct' : 'wrong'}">${ correct ? 'Benar! 🎉' : 'Salah' } &nbsp; (Kunci: ${escapeHtml(q.kunci||'')})</div>`;
+
+      // enable pembahasan button
+      const pbBtn = document.getElementById('btn-show-pembahasan');
+      pbBtn.disabled = false;
+      pbBtn.style.opacity = 1;
+      pbBtn.addEventListener('click', ()=> showPembahasan(q));
+
+      // render math (in case feedback/pembahasan shows)
+      renderMath();
+    }
+
+    function showPembahasan(q){
+      const area = document.getElementById('pembahasan-area');
+      area.innerHTML = textToHtmlKeepMath(q.pembahasan || '<div class="muted">Pembahasan belum tersedia.</div>');
+      renderMath();
+    }
+
+    // reset button for testing (clears today's local flag and reloads)
+    document.getElementById('daily-reset').addEventListener('click', ()=>{
+      if (!confirm('Reset local penyelesaian hari ini? (hanya untuk testing)')) return;
+      localStorage.removeItem(doneKey());
+      loadDailyQuestion();
+    });
+
+    // on load
+    loadDailyQuestion();
   </script>
 </body>
 </html>
-
-
-
-
